@@ -56,7 +56,18 @@ vim.o.winborder = "rounded"
 vim.cmd("filetype plugin on")
 
 -- LSP --
-vim.lsp.enable({ "basedpyright", "ruff", "gopls", "golangci-lint", "ts_ls" })
+vim.lsp.enable({
+  "basedpyright",
+  "ruff",
+  "gopls",
+  "golangci-lint",
+  "ts_ls",
+  "html",
+  "jsonls",
+  "bashls",
+  "yamlls",
+  "taplo",
+})
 
 vim.lsp.inlay_hint.enable()
 
