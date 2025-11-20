@@ -5,6 +5,7 @@ return {
   root_markers = { "go.mod", "go.sum", ".git" },
   settings = {
     gopls = {
+      semanticTokens = true,
       hints = {
         assignVariableTypes = true,
         compositeLiteralFields = true,
