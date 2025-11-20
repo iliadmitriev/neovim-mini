@@ -1,3 +1,8 @@
+-- https://github.com/python-lsp/python-lsp-server
+-- ```bash
+-- uv tool install 'python-lsp-server[all]'
+-- ```
+
 ---@type vim.lsp.Config
 return {
   cmd = { "pylsp" },
@@ -9,5 +14,10 @@ return {
     "requirements.txt",
     "Pipfile",
     ".git",
+  },
+  settings = {
+    pylsp = {
+      plugins = {},
+    },
   },
 }

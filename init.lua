@@ -59,14 +59,20 @@ vim.cmd("filetype plugin on")
 vim.lsp.enable({
   "basedpyright",
   "ruff",
+  -- "pylsp", -- old version of pylint<4 plugin doesn't recognize pyproject.toml
   "gopls",
   "golangci-lint",
+  "buf_ls",
+  -- "protols", -- duplicates buf_ls
+  "lua_ls",
   "ts_ls",
   "html",
   "jsonls",
   "bashls",
   "yamlls",
   "taplo",
+  "dockerls",
+  "docker_compose_language_service",
 })
 
 vim.lsp.inlay_hint.enable()
@@ -105,9 +111,12 @@ vim.cmd("autocmd FileType text,markdown,txt setlocal spell spelllang=en")
 vim.cmd("autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=4")
 vim.cmd("autocmd FileType javascript,typescript setlocal expandtab shiftwidth=2 tabstop=2")
 vim.cmd("autocmd FileType html,css setlocal expandtab shiftwidth=2 tabstop=2")
+vim.cmd("autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2")
 
 -- KEYMAPS --
--- reload config
+-- editor
+vim.keymap.set("n", "<leader>q", ":q<CR>")
+vim.keymap.set("n", "<leader>w", ":w<CR>")
 vim.keymap.set("n", "<leader>r", ":source " .. vim.fn.stdpath("config") .. "/init.lua<CR>")
 
 -- lsp keymaps
@@ -151,6 +160,3 @@ vim.keymap.set("v", "K", ":m '>-2<CR>gv=gv")                     -- Move current
 -- Move selected blocks around
 vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv") -- Move current line up
 vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv") -- Move current line down
-
--- Exit
-vim.keymap.set("n", "<leader>q", ":q<CR>")
