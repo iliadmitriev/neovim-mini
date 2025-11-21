@@ -85,6 +85,9 @@ return {
   },
   settings = {
     Lua = {
+      format = {
+        enable = true,
+      },
       hint = {
         arrayIndex = "Disable",
         enable = true,
