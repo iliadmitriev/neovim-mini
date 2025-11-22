@@ -3,8 +3,9 @@ vim.g.mapleader = " " -- sets leader key
 
 -- COLORSCHEME --
 vim.cmd.colorscheme("catppuccin-mocha")
-
 -- OPTIONS --
+-- Disable welcome screen and show empty buffer
+vim.opt.shortmess:append("I")        -- Disable intro message
 vim.o.title = true                   -- show title
 vim.o.syntax = "ON"                  -- set syntax to ON
 vim.o.backup = false                 -- turn off backup file
