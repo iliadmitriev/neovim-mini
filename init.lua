@@ -23,6 +23,7 @@ vim.o.mouse = "a"                    -- enable the mouse in all modes
 vim.o.ignorecase = true              -- enable case insensitive searching
 vim.o.smartcase = true               -- all searches are case insensitive unless there's a capital letter
 vim.o.smartindent = true             -- smart auto-indenting when starting a new line
+vim.o.autoindent = true              -- copy indentation from the current line
 vim.o.hlsearch = false               -- disable all highlighted search results
 vim.o.incsearch = true               -- enable incremental searching
 vim.o.wrap = false                   -- enable text wrapping
@@ -33,7 +34,7 @@ vim.o.fileencoding = "utf-8"         -- encoding set to utf-8
 vim.o.pumheight = 10                 -- number of items in popup menu
 vim.o.showtabline = 2                -- always show the tab line
 vim.o.laststatus = 2                 -- always show statusline
-vim.o.signcolumn = "yes"            --  only use sign column when there is something to put there
+vim.o.signcolumn = "yes"             --  only use sign column when there is something to put there
 -- vim.o.colorcolumn = "80"             -- set color column to 80 characters
 vim.o.showcmd = true                 -- show the command
 vim.o.showmatch = true               -- highlight matching brackets
@@ -51,6 +52,27 @@ vim.o.termguicolors = true           -- terminal gui colors
 vim.o.cmdwinheight = 10              -- cmd window can only take up this many lines
 vim.opt.completeopt = { "menuone", "noselect", "noinsert" }
 vim.o.winborder = "rounded"
+-- https://ftp.nluug.nl/vim/runtime/spell/ru.utf-8.spl
+-- vim.fn.stdpath("data") .. '/spell'
+vim.opt.spelllang = { "en_us", "ru_ru" }
+vim.o.grepprg = "rg --vimgrep"   -- use ripgrep
+vim.o.grepformat = "%f:%l:%c:%m" -- filename, line number, column, content
+
+-- netrw config
+vim.g.netrw_banner = 0                  -- gets rid of the annoying banner for netrw
+-- vim.g.netrw_altv = 0                    -- change from left splitting to right splitting
+vim.g.netrw_liststyle = 0               -- tree style view in netrw
+vim.g.netrw_sizestyle = "H"
+vim.g.netrw_sort_sequence = [[[\/]$,*]] -- sort directories first
+vim.g.netrw_keepdir = 0
+vim.g.netrw_hide = 1
+vim.g.netrw_localcopydircmd = "cp -r"
+vim.g.netrw_localmkdir = "mkdir -p"
+vim.g.netrw_localrmdir = "rm -r"
+vim.g.netrw_compress = "gzip"
+vim.g.netrw_cursor = 2
+vim.g.netrw_alto = 1
+vim.g.netrw_preview = 1
 
 -- FILE TYPE --
 vim.cmd("filetype plugin on")
@@ -97,8 +119,26 @@ vim.diagnostic.config({
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(ev)
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if client:supports_method("textDocument/completion") then
+    if client and client:supports_method("textDocument/completion") then
       vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+    end
+
+    -- Only set up if the client supports documentHighlight
+    if client and client.server_capabilities.documentHighlightProvider then
+      -- Highlight on CursorHold
+      -- vim.opt.updatetime = 300 -- to setup this timeout
+      vim.api.nvim_create_autocmd("CursorHold", {
+        buffer = ev.buf,
+        callback = function() vim.lsp.buf.document_highlight() end,
+        desc = "LSP document highlight",
+      })
+
+      -- Clear highlights on cursor movement/exit
+      vim.api.nvim_create_autocmd({ "CursorMoved", "InsertEnter", "BufLeave" }, {
+        buffer = ev.buf,
+        callback = function() vim.lsp.buf.clear_references() end,
+        desc = "Clear LSP highlights",
+      })
     end
   end,
 })
@@ -107,23 +147,36 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 --- AUTOCOMMANDS
 vim.cmd("autocmd FocusGained,BufEnter * :checktime")
-vim.cmd("autocmd FileType text,markdown,txt setlocal spell spelllang=en")
+vim.cmd("autocmd FileType text,markdown,txt setlocal spell spelllang=en,ru_ru")
 vim.cmd("autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=4")
 vim.cmd("autocmd FileType javascript,typescript setlocal expandtab shiftwidth=2 tabstop=2")
 vim.cmd("autocmd FileType html,css setlocal expandtab shiftwidth=2 tabstop=2")
 vim.cmd("autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2")
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.lua", "*.py", "*.js", "*.ts", "*.json", "*.go" },
+  callback = function()
+    if vim.lsp.buf.format then vim.lsp.buf.format({ async = true }) end
+  end,
+  desc = "Auto-format on save",
+})
+vim.api.nvim_create_autocmd("TextYankPost", {
+  callback = function() vim.highlight.on_yank({ higroup = "IncSearch", timeout = 400 }) end,
+  desc = "Highlight yank",
+})
 
 -- KEYMAPS --
 -- editor
 vim.keymap.set("n", "<leader>q", ":q<CR>")
 vim.keymap.set("n", "<leader>w", ":w<CR>")
 vim.keymap.set("n", "<leader>r", ":source " .. vim.fn.stdpath("config") .. "/init.lua<CR>")
+vim.keymap.set("n", "<leader>e", ":Explore<CR>", { desc = "File browser (cwd)" })
 
 -- lsp keymaps
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { noremap = true, silent = true, desc = "Go to Definition" })
 vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { noremap = true, silent = true, desc = "Go to Declaration" })
 vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { noremap = true, silent = true, desc = "Go to Implementation" })
 vim.keymap.set("n", "gr", vim.lsp.buf.references, { noremap = true, silent = true, desc = "Show References" })
+vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { noremap = true, silent = true, desc = "Show References" })
 vim.keymap.set("n", "<leader>lr", vim.lsp.buf.rename, { noremap = true, silent = true, desc = "Rename Symbol" })
 vim.keymap.set("n", "<leader>la", vim.lsp.buf.code_action, { noremap = true, silent = true, desc = "Code Action" })
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true, desc = "Hover Documentation" })
@@ -144,6 +197,28 @@ vim.keymap.set("n", "<C-k>", "<C-w>k") -- control+k switches to top split
 vim.keymap.set("n", "<leader>bn", ":bnext <CR>")     -- Tab goes to next buffer
 vim.keymap.set("n", "<leader>bp", ":bprevious <CR>") -- Shift+Tab goes to previous buffer
 vim.keymap.set("n", "<leader>bd", ":bd! <CR>")       -- Space+d delets current buffer
+-- vim.keymap.set("n", "<leader>bb", ":call setqflist(map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), '{\"bufnr\": v:val}')) | copen<CR>")
+vim.keymap.set("n", "<leader>bb", function()
+  vim.fn.setqflist(
+    vim.tbl_filter(
+      function(b)
+        return vim.api.nvim_buf_is_valid(b.bufnr) and vim.api.nvim_get_option_value("buflisted", { buf = b.bufnr })
+      end,
+      vim.tbl_map(function(buf)
+        local name = vim.api.nvim_buf_get_name(buf)
+        return {
+          bufnr = buf,
+          filename = name == "" and "[No Name]" or name,
+          text = name == "" and "[No Name]"
+              or vim.fn.fnamemodify(name, ":t")
+              .. (vim.api.nvim_get_option_value("modified", { buf = buf }) and " [+]" or ""),
+        }
+      end, vim.api.nvim_list_bufs())
+    ),
+    "r"
+  )
+  vim.cmd("copen | wincmd J")
+end, { desc = "List buffers in quickfix" })
 
 -- insert mode navigation
 vim.keymap.set("i", "<C-h>", "<left>")  -- control+h moves cursor left
@@ -160,3 +235,29 @@ vim.keymap.set("v", "K", ":m '>-2<CR>gv=gv")                     -- Move current
 -- Move selected blocks around
 vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv") -- Move current line up
 vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv") -- Move current line down
+
+-- Quickfix list
+vim.keymap.set("n", "<C-q>", ":copen<CR>") -- open in quickfix list on Ctrl+Q
+vim.keymap.set("n", "<leader>lx", function()
+  local items = {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_get_option_value("buflisted", { buf = buf }) then
+      for _, diag in ipairs(vim.diagnostic.get(buf)) do
+        table.insert(items, {
+          bufnr = buf,
+          lnum = diag.lnum + 1,
+          col = diag.col + 1,
+          text = diag.message,
+          type = ({ "E", "W", "I", "H" })[diag.severity] or "E",
+        })
+      end
+    end
+  end
+  vim.fn.setqflist(items, "r")
+  vim.cmd("copen")
+end, { desc = "All LSP diagnostics to quickfix" })
+
+-- Better indenting in visual mode
+vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
+vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
+vim.keymap.set("v", "=", "=gv", { desc = "Reindent and reselect" })
