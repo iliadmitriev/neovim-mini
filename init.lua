@@ -96,6 +96,7 @@ vim.lsp.enable({
   "taplo",
   "dockerls",
   "docker_compose_language_service",
+  "efm-ls", -- one and for: stylua, pylint
 })
 
 vim.lsp.inlay_hint.enable()
