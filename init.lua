@@ -97,6 +97,7 @@ vim.lsp.enable({
   "dockerls",
   "docker_compose_language_service",
   "efm-ls", -- one and for: stylua, pylint
+  "rust_analyzer",
 })
 
 vim.lsp.inlay_hint.enable()
