@@ -51,7 +51,7 @@ vim.o.splitbelow = true              -- split go below
 vim.o.splitright = true              -- vertical split to the right
 vim.o.termguicolors = true           -- terminal gui colors
 vim.o.cmdwinheight = 10              -- cmd window can only take up this many lines
-vim.opt.completeopt = { "menuone", "noselect", "noinsert" }
+vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
 vim.o.winborder = "rounded"
 -- https://ftp.nluug.nl/vim/runtime/spell/ru.utf-8.spl
 -- vim.fn.stdpath("data") .. '/spell'
@@ -74,6 +74,13 @@ vim.g.netrw_compress = "gzip"
 vim.g.netrw_cursor = 2
 vim.g.netrw_alto = 1
 vim.g.netrw_preview = 1
+-- folding
+vim.opt.foldmethod = "syntax" -- Change to 'expr' if you prefer
+vim.opt.foldlevel = 20        -- Adjust based on your preference
+vim.opt.foldlevelstart = 20
+vim.opt.foldenable = true
+vim.opt.foldopen = "block,hor,mark,percent,quickfix,search,tag,undo" -- Automatically open folds
+-- vim.opt.foldclose = "hor,mark"                                       -- Close folds when moving cursor
 
 -- FILE TYPE --
 vim.cmd("filetype plugin on")
@@ -264,3 +271,19 @@ end, { desc = "All LSP diagnostics to quickfix" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 vim.keymap.set("v", "=", "=gv", { desc = "Reindent and reselect" })
+
+-- Toggle fold at cursor
+vim.keymap.set("n", "<space>z", "za", { noremap = true, silent = true, desc = "Toggle fold at cursor" })
+-- Close fold at cursor
+vim.keymap.set("n", "<space>zc", "zc", { noremap = true, silent = true, desc = "Close fold at cursor" })
+-- Open fold at cursor
+vim.keymap.set("n", "<space>zo", "zo", { noremap = true, silent = true, desc = "Open fold at cursor" })
+-- Close all folds
+vim.keymap.set("n", "<space>zC", "zM", { noremap = true, silent = true, desc = "Close all folds" })
+-- Open all folds
+vim.keymap.set("n", "<space>zO", "zR", { noremap = true, silent = true, desc = "Open all folds" })
+
+-- Move to next fold
+vim.keymap.set("n", "]z", "zj", { noremap = true, silent = true, desc = "Move to next fold" })
+-- Move to previous fold
+vim.keymap.set("n", "[z", "zk", { noremap = true, silent = true, desc = "Move to previous fold" })

@@ -114,6 +114,15 @@ return {
   },
   settings = {
     ["rust-analyzer"] = {
+      completion = {
+        termSearch = {
+          enable = true,
+        },
+      },
+      inlayHints = {
+        enable = true,
+        genericParameterHints = { type = { enable = true } },
+      },
       lens = {
         debug = { enable = true },
         enable = true,
