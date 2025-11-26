@@ -165,7 +165,7 @@ vim.cmd("autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2")
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = { "*.lua", "*.py", "*.js", "*.ts", "*.json", "*.go" },
   callback = function()
-    if vim.lsp.buf.format then vim.lsp.buf.format({ async = true }) end
+    if vim.lsp.buf.format then vim.lsp.buf.format({ async = false }) end
   end,
   desc = "Auto-format on save",
 })
@@ -280,7 +280,6 @@ vim.keymap.set("v", "=", "=gv", { desc = "Reindent and reselect" })
 local function toggle_comment_smart()
   -- Check the current editor mode
   local mode = vim.api.nvim_get_mode().mode
-  print(mode)
   if vim.tbl_contains({ "V", "v", "" }, mode) then -- If in visual mode, simulate pressing 'gc' to comment the selection
     vim.api.nvim_feedkeys("gc", "normal", true)
   else
