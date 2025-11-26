@@ -277,6 +277,22 @@ vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 vim.keymap.set("v", "=", "=gv", { desc = "Reindent and reselect" })
 
+-- A function to handle both normal and visual mode toggling
+local function toggle_comment_smart()
+    -- Check the current editor mode
+    local mode = vim.api.nvim_get_mode().mode
+    if mode:find("v") or mode:find("V") then
+        -- If in visual mode, simulate pressing 'gc' to comment the selection
+        vim.api.nvim_feedkeys("gc", "normal", true)
+    else
+        -- If in normal mode, simulate pressing 'gcc' to comment the current line
+        vim.api.nvim_feedkeys("gcc", "normal", true)
+    end
+end
+
+-- Example of mapping this function to a key combination (e.g., Ctrl + /)
+vim.keymap.set({ "n", "v" }, "<leader>/", toggle_comment_smart, { silent = true })
+
 -- Toggle fold at cursor
 vim.keymap.set("n", "<space>z", "za", { noremap = true, silent = true, desc = "Toggle fold at cursor" })
 -- Close fold at cursor
@@ -291,4 +307,8 @@ vim.keymap.set("n", "<space>zO", "zR", { noremap = true, silent = true, desc = "
 -- Move to next fold
 vim.keymap.set("n", "]z", "zj", { noremap = true, silent = true, desc = "Move to next fold" })
 -- Move to previous fold
+vim.keymap.set("n", "[z", "zk", { noremap = true, silent = true, desc = "Move to previous fold" })
+vim.keymap.set("n", "[z", "zk", { noremap = true, silent = true, desc = "Move to previous fold" })
+vim.keymap.set("n", "[z", "zk", { noremap = true, silent = true, desc = "Move to previous fold" })
+vim.keymap.set("n", "[z", "zk", { noremap = true, silent = true, desc = "Move to previous fold" })
 vim.keymap.set("n", "[z", "zk", { noremap = true, silent = true, desc = "Move to previous fold" })
