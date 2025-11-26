@@ -87,70 +87,70 @@ vim.cmd("filetype plugin on")
 
 -- LSP --
 vim.lsp.enable({
-    "basedpyright",
-    "ruff",
-    -- "pylsp", -- old version of pylint<4 plugin doesn't recognize pyproject.toml
-    "gopls",
-    "golangci-lint",
-    "buf_ls",
-    -- "protols", -- duplicates buf_ls
-    "lua_ls",
-    "ts_ls",
-    "html",
-    "jsonls",
-    "bashls",
-    "yamlls",
-    "taplo",
-    "dockerls",
-    "docker_compose_language_service",
-    "efm-ls", -- one and for: stylua, pylint
-    "rust_analyzer",
+  "basedpyright",
+  "ruff",
+  -- "pylsp", -- old version of pylint<4 plugin doesn't recognize pyproject.toml
+  "gopls",
+  "golangci-lint",
+  "buf_ls",
+  -- "protols", -- duplicates buf_ls
+  "lua_ls",
+  "ts_ls",
+  "html",
+  "jsonls",
+  "bashls",
+  "yamlls",
+  "taplo",
+  "dockerls",
+  "docker_compose_language_service",
+  "efm-ls", -- one and for: stylua, pylint
+  "rust_analyzer",
 })
 
 vim.lsp.inlay_hint.enable()
 
 vim.diagnostic.config({
-    virtual_text = {
-        prefix = "●",
-        spacing = 4,
+  virtual_text = {
+    prefix = "●",
+    spacing = 4,
+  },
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = "●",
+      [vim.diagnostic.severity.WARN] = "●",
+      [vim.diagnostic.severity.INFO] = "●",
+      [vim.diagnostic.severity.HINT] = "●",
     },
-    signs = {
-        text = {
-            [vim.diagnostic.severity.ERROR] = "●",
-            [vim.diagnostic.severity.WARN] = "●",
-            [vim.diagnostic.severity.INFO] = "●",
-            [vim.diagnostic.severity.HINT] = "●",
-        },
-    },
-    update_in_insert = false,
-    underline = true,
-    severity_sort = true,
+  },
+  update_in_insert = false,
+  underline = true,
+  severity_sort = true,
 })
 vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(ev)
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        if client and client:supports_method("textDocument/completion") then
-            vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-        end
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client and client:supports_method("textDocument/completion") then
+      vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+    end
 
-        -- Only set up if the client supports documentHighlight
-        if client and client.server_capabilities.documentHighlightProvider then
-            -- Highlight on CursorHold
-            -- vim.opt.updatetime = 300 -- to setup this timeout
-            vim.api.nvim_create_autocmd("CursorHold", {
-                buffer = ev.buf,
-                callback = function() vim.lsp.buf.document_highlight() end,
-                desc = "LSP document highlight",
-            })
+    -- Only set up if the client supports documentHighlight
+    if client and client.server_capabilities.documentHighlightProvider then
+      -- Highlight on CursorHold
+      -- vim.opt.updatetime = 300 -- to setup this timeout
+      vim.api.nvim_create_autocmd("CursorHold", {
+        buffer = ev.buf,
+        callback = function() vim.lsp.buf.document_highlight() end,
+        desc = "LSP document highlight",
+      })
 
-            -- Clear highlights on cursor movement/exit
-            vim.api.nvim_create_autocmd({ "CursorMoved", "InsertEnter", "BufLeave" }, {
-                buffer = ev.buf,
-                callback = function() vim.lsp.buf.clear_references() end,
-                desc = "Clear LSP highlights",
-            })
-        end
-    end,
+      -- Clear highlights on cursor movement/exit
+      vim.api.nvim_create_autocmd({ "CursorMoved", "InsertEnter", "BufLeave" }, {
+        buffer = ev.buf,
+        callback = function() vim.lsp.buf.clear_references() end,
+        desc = "Clear LSP highlights",
+      })
+    end
+  end,
 })
 
 -- vim.cmd("s-
@@ -163,15 +163,15 @@ vim.cmd("autocmd FileType javascript,typescript setlocal expandtab shiftwidth=2 
 vim.cmd("autocmd FileType html,css setlocal expandtab shiftwidth=2 tabstop=2")
 vim.cmd("autocmd FileType lua setlocal expandtab shiftwidth=2 tabstop=2")
 vim.api.nvim_create_autocmd("BufWritePre", {
-    pattern = { "*.lua", "*.py", "*.js", "*.ts", "*.json", "*.go" },
-    callback = function()
-        if vim.lsp.buf.format then vim.lsp.buf.format({ async = true }) end
-    end,
-    desc = "Auto-format on save",
+  pattern = { "*.lua", "*.py", "*.js", "*.ts", "*.json", "*.go" },
+  callback = function()
+    if vim.lsp.buf.format then vim.lsp.buf.format({ async = true }) end
+  end,
+  desc = "Auto-format on save",
 })
 vim.api.nvim_create_autocmd("TextYankPost", {
-    callback = function() vim.highlight.on_yank({ higroup = "IncSearch", timeout = 400 }) end,
-    desc = "Highlight yank",
+  callback = function() vim.highlight.on_yank({ higroup = "IncSearch", timeout = 400 }) end,
+  desc = "Highlight yank",
 })
 
 -- KEYMAPS --
@@ -209,26 +209,25 @@ vim.keymap.set("n", "<leader>bp", ":bprevious <CR>") -- Shift+Tab goes to previo
 vim.keymap.set("n", "<leader>bd", ":bd! <CR>")       -- Space+d delets current buffer
 -- vim.keymap.set("n", "<leader>bb", ":call setqflist(map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), '{\"bufnr\": v:val}')) | copen<CR>")
 vim.keymap.set("n", "<leader>bb", function()
-    vim.fn.setqflist(
-        vim.tbl_filter(
-            function(b)
-                return vim.api.nvim_buf_is_valid(b.bufnr) and
-                vim.api.nvim_get_option_value("buflisted", { buf = b.bufnr })
-            end,
-            vim.tbl_map(function(buf)
-                local name = vim.api.nvim_buf_get_name(buf)
-                return {
-                    bufnr = buf,
-                    filename = name == "" and "[No Name]" or name,
-                    text = name == "" and "[No Name]"
-                        or vim.fn.fnamemodify(name, ":t")
-                        .. (vim.api.nvim_get_option_value("modified", { buf = buf }) and " [+]" or ""),
-                }
-            end, vim.api.nvim_list_bufs())
-        ),
-        "r"
-    )
-    vim.cmd("copen | wincmd J")
+  vim.fn.setqflist(
+    vim.tbl_filter(
+      function(b)
+        return vim.api.nvim_buf_is_valid(b.bufnr) and vim.api.nvim_get_option_value("buflisted", { buf = b.bufnr })
+      end,
+      vim.tbl_map(function(buf)
+        local name = vim.api.nvim_buf_get_name(buf)
+        return {
+          bufnr = buf,
+          filename = name == "" and "[No Name]" or name,
+          text = name == "" and "[No Name]"
+              or vim.fn.fnamemodify(name, ":t")
+              .. (vim.api.nvim_get_option_value("modified", { buf = buf }) and " [+]" or ""),
+        }
+      end, vim.api.nvim_list_bufs())
+    ),
+    "r"
+  )
+  vim.cmd("copen | wincmd J")
 end, { desc = "List buffers in quickfix" })
 
 -- insert mode navigation
@@ -254,22 +253,22 @@ vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv") -- Move current line down
 -- Quickfix list
 vim.keymap.set("n", "<C-q>", ":copen<CR>") -- open in quickfix list on Ctrl+Q
 vim.keymap.set("n", "<leader>lx", function()
-    local items = {}
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_get_option_value("buflisted", { buf = buf }) then
-            for _, diag in ipairs(vim.diagnostic.get(buf)) do
-                table.insert(items, {
-                    bufnr = buf,
-                    lnum = diag.lnum + 1,
-                    col = diag.col + 1,
-                    text = diag.message,
-                    type = ({ "E", "W", "I", "H" })[diag.severity] or "E",
-                })
-            end
-        end
+  local items = {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_get_option_value("buflisted", { buf = buf }) then
+      for _, diag in ipairs(vim.diagnostic.get(buf)) do
+        table.insert(items, {
+          bufnr = buf,
+          lnum = diag.lnum + 1,
+          col = diag.col + 1,
+          text = diag.message,
+          type = ({ "E", "W", "I", "H" })[diag.severity] or "E",
+        })
+      end
     end
-    vim.fn.setqflist(items, "r")
-    vim.cmd("copen")
+  end
+  vim.fn.setqflist(items, "r")
+  vim.cmd("copen")
 end, { desc = "All LSP diagnostics to quickfix" })
 
 -- Better indenting in visual mode
@@ -277,21 +276,26 @@ vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 vim.keymap.set("v", "=", "=gv", { desc = "Reindent and reselect" })
 
--- A function to handle both normal and visual mode toggling
+-- A function to handle both normal and visual mode comment toggling
 local function toggle_comment_smart()
-    -- Check the current editor mode
-    local mode = vim.api.nvim_get_mode().mode
-    if mode:find("v") or mode:find("V") then
-        -- If in visual mode, simulate pressing 'gc' to comment the selection
-        vim.api.nvim_feedkeys("gc", "normal", true)
-    else
-        -- If in normal mode, simulate pressing 'gcc' to comment the current line
-        vim.api.nvim_feedkeys("gcc", "normal", true)
-    end
+  -- Check the current editor mode
+  local mode = vim.api.nvim_get_mode().mode
+  print(mode)
+  if vim.tbl_contains({ "V", "v", "" }, mode) then -- If in visual mode, simulate pressing 'gc' to comment the selection
+    vim.api.nvim_feedkeys("gc", "normal", true)
+  else
+    -- If in normal mode, simulate pressing 'gcc' to comment the current line
+    vim.api.nvim_feedkeys("gcc", "normal", true)
+  end
 end
 
 -- Example of mapping this function to a key combination (e.g., Ctrl + /)
-vim.keymap.set({ "n", "v" }, "<leader>/", toggle_comment_smart, { silent = true })
+vim.keymap.set(
+  { "n", "v" },
+  "<leader>/",
+  toggle_comment_smart,
+  { silent = true, desc = "Toggle comment for visual and normal modes" }
+)
 
 -- Toggle fold at cursor
 vim.keymap.set("n", "<space>z", "za", { noremap = true, silent = true, desc = "Toggle fold at cursor" })
