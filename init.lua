@@ -276,23 +276,18 @@ vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 vim.keymap.set("v", "=", "=gv", { desc = "Reindent and reselect" })
 
--- A function to handle both normal and visual mode comment toggling
-local function toggle_comment_smart()
-  -- Check the current editor mode
-  local mode = vim.api.nvim_get_mode().mode
-  if vim.tbl_contains({ "V", "v", "" }, mode) then -- If in visual mode, simulate pressing 'gc' to comment the selection
-    vim.api.nvim_feedkeys("gc", "normal", true)
-  else
-    -- If in normal mode, simulate pressing 'gcc' to comment the current line
-    vim.api.nvim_feedkeys("gcc", "normal", true)
-  end
-end
-
--- Example of mapping this function to a key combination (e.g., Ctrl + /)
+-- comment toggle for normal mode
 vim.keymap.set(
-  { "n", "v" },
+  "n",
   "<leader>/",
-  toggle_comment_smart,
+  function() vim.api.nvim_feedkeys("gcc", "normal", true) end,
+  { silent = true, desc = "Toggle comment for visual and normal modes" }
+)
+-- comment toggle for visual mode
+vim.keymap.set(
+  "v",
+  "<leader>/",
+  function() vim.api.nvim_feedkeys("gcgv", "normal", true) end,
   { silent = true, desc = "Toggle comment for visual and normal modes" }
 )
 
