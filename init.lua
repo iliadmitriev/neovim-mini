@@ -177,6 +177,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- KEYMAPS --
 -- editor
 vim.keymap.set("n", "<leader>q", ":q<CR>")
+vim.keymap.set("n", "<leader>Q", ":wqa<CR>")
 vim.keymap.set("n", "<leader>w", ":w<CR>")
 vim.keymap.set("n", "<leader>r", ":source " .. vim.fn.stdpath("config") .. "/init.lua<CR>")
 vim.keymap.set("n", "<leader>e", ":Explore<CR>", { desc = "File browser (cwd)" })
