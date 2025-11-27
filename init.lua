@@ -1,5 +1,6 @@
 -- LEADER --
 vim.g.mapleader = " " -- sets leader key
+vim.g.maplocalleader = " "
 
 -- COLORSCHEME --
 vim.cmd.colorscheme("catppuccin-mocha")
@@ -278,19 +279,9 @@ vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 vim.keymap.set("v", "=", "=gv", { desc = "Reindent and reselect" })
 
 -- comment toggle for normal mode
-vim.keymap.set(
-  "n",
-  "<leader>/",
-  function() vim.api.nvim_feedkeys("gcc", "normal", true) end,
-  { silent = true, desc = "Toggle comment for visual and normal modes" }
-)
+vim.keymap.set("n", "<leader>/", function() vim.api.nvim_feedkeys("gcc", "normal", false) end, { silent = true })
 -- comment toggle for visual mode
-vim.keymap.set(
-  "v",
-  "<leader>/",
-  function() vim.api.nvim_feedkeys("gcgv", "normal", true) end,
-  { silent = true, desc = "Toggle comment for visual and normal modes" }
-)
+vim.keymap.set("v", "<leader>/", function() vim.api.nvim_feedkeys("gcgv", "normal", false) end, { silent = true })
 
 -- Toggle fold at cursor
 vim.keymap.set("n", "<space>z", "za", { noremap = true, silent = true, desc = "Toggle fold at cursor" })
