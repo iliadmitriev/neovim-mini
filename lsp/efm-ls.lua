@@ -2,8 +2,8 @@
 -- go install github.com/mattn/efm-langserver@latest
 -- ref: https://github.com/creativenull/efmls-configs-nvim/tree/main
 
-local python = require("utils.python")
-
+-- local python = require("utils.python")
+--
 local stylua = {
   formatCanRange = true,
   formatCommand = "stylua --color Never ${--range-start:charStart} ${--range-end:charEnd} --stdin-filepath '${INPUT}' -",
@@ -11,16 +11,16 @@ local stylua = {
   rootMarkers = { "stylua.toml", ".stylua.toml" },
 }
 
-local pylint_exe = python.find_script_executable("pylint")
-
-local pylint = {
-  prefix = "pylint",
-  lintSource = "efm/pylint",
-  rootMarkers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".pylintrc" },
-  lintCommand = string.format([[%s --source-roots=. --score=no "${INPUT}"]], pylint_exe),
-  lintStdin = false,
-  lintFormats = { "%.%#:%l:%c: %t%.%#: %m" },
-}
+-- local pylint_exe = python.find_script_executable("pylint")
+--
+-- local pylint = {
+--   prefix = "pylint",
+--   lintSource = "efm/pylint",
+--   rootMarkers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".pylintrc" },
+--   lintCommand = string.format([[%s --source-roots=. --score=no "${INPUT}"]], pylint_exe),
+--   lintStdin = false,
+--   lintFormats = { "%.%#:%l:%c: %t%.%#: %m" },
+-- }
 
 ---@type vim.lsp.Config
 return {
@@ -28,7 +28,7 @@ return {
   roor_markers = { ".git" },
   filetypes = {
     "lua",
-    "python",
+    -- "python",
   },
   init_options = {
     documentFormatting = true,
@@ -41,7 +41,7 @@ return {
   settings = {
     languages = {
       lua = { stylua },
-      python = { pylint },
+      -- python = { pylint },
     },
   },
 }

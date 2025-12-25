@@ -88,9 +88,10 @@ vim.cmd("filetype plugin on")
 
 -- LSP --
 vim.lsp.enable({
-  "basedpyright",
+  -- "basedpyright",
+  "ty",
   "ruff",
-  -- "pylsp", -- old version of pylint<4 plugin doesn't recognize pyproject.toml
+  -- "pylsp", -- old version of pylint<4 plugin doesn't recognize pyproject.toml, use pylsp<=v1.14
   "gopls",
   "golangci-lint",
   "buf_ls",
@@ -190,7 +191,12 @@ vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { noremap = true, silent =
 vim.keymap.set("n", "gr", vim.lsp.buf.references, { noremap = true, silent = true, desc = "Show References" })
 vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { noremap = true, silent = true, desc = "Show References" })
 vim.keymap.set("n", "<leader>lr", vim.lsp.buf.rename, { noremap = true, silent = true, desc = "Rename Symbol" })
-vim.keymap.set("n", "<leader>la", vim.lsp.buf.code_action, { noremap = true, silent = true, desc = "Code Action" })
+vim.keymap.set(
+  { "n", "v" },
+  "<leader>la",
+  vim.lsp.buf.code_action,
+  { noremap = true, silent = true, desc = "Code Action" }
+)
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { noremap = true, silent = true, desc = "Hover Documentation" })
 vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, { noremap = true, silent = true, desc = "Signature Help" })
 vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format, { noremap = true, silent = true, desc = "Format Buffer" })
@@ -209,6 +215,13 @@ vim.keymap.set("n", "<C-k>", "<C-w>k") -- control+k switches to top split
 vim.keymap.set("n", "<leader>bn", ":bnext <CR>")     -- Tab goes to next buffer
 vim.keymap.set("n", "<leader>bp", ":bprevious <CR>") -- Shift+Tab goes to previous buffer
 vim.keymap.set("n", "<leader>bd", ":bd! <CR>")       -- Space+d delets current buffer
+vim.keymap.set(
+  "n",
+  "<leader><tab>",
+  "<Cmd>b#<CR>",
+  { noremap = true, silent = true, desc = "Switch to previous buffer" }
+)
+
 -- vim.keymap.set("n", "<leader>bb", ":call setqflist(map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), '{\"bufnr\": v:val}')) | copen<CR>")
 vim.keymap.set("n", "<leader>bb", function()
   vim.fn.setqflist(
